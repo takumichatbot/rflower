@@ -1,0 +1,4 @@
+  # .gitignoreの例
+venv/
+__pycache__/
+*.pyc
