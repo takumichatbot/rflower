@@ -1,10 +1,8 @@
 # main.py
 from flask import Flask, render_template, request, jsonify
-from qa_data import qa_pairs
-from flask_cors import CORS # CORSを追加
+from qa_data import qa_pairs # qa_data.py から qa_pairs をインポート
 
 app = Flask(__name__)
-CORS(app) # 全てのオリジンからのアクセスを許可（開発用。本番環境では制限を推奨）
 
 def get_answer(question):
     """
@@ -17,16 +15,13 @@ def get_answer(question):
             return answer
     return "申し訳ありませんが、その質問にはお答えできません。別の質問をしてください。"
 
-# チャットボットのUIコンポーネントを返すエンドポイント
-@app.route('/chatbot_ui')
-def chatbot_ui():
+@app.route('/')
+def index():
     """
-    チャットボットのUIコンポーネント（HTML）を返す
+    チャットボットのメインページ（UI全体）を表示
     """
-    # templates/chatbot_ui.html を新しく作成します
-    return render_template('chatbot_ui.html')
+    return render_template('index.html') # templates/index.html をレンダリング
 
-# ユーザーからの質問を受け取り、回答を返すAPIエンドポイント
 @app.route('/ask', methods=['POST'])
 def ask_chatbot():
     """
@@ -40,4 +35,4 @@ def ask_chatbot():
     return jsonify({'answer': bot_answer})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True) # 開発中は debug=True が便利
