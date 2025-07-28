@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIチャットボット</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="chatbot-container">
+        <div class="chatbot-header">AIチャットボット</div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="message bot-message">こんにちは！何か質問はありますか？（営業時間など）</div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="user-input" placeholder="質問を入力してください..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">送信</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
