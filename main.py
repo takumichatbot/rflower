@@ -13,7 +13,18 @@ load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 if not GOOGLE_API_KEY:
     raise ValueError("GOOGLE_API_KEY 環境変数が設定されていません。")
-genai.configure(api_key=GOOGLE_API_KEY)
+genai.configure(api_key=GOOGLE_API_KEY)# === 一時的なモデル確認コード：実行後、この部分は削除してください ===
+print("--- 利用可能なGeminiモデル ---")
+found_models = False
+for m in genai.list_models():
+    if "generateContent" in m.supported_generation_methods:
+        print(f"- {m.name}")
+        found_models = True
+if not found_models:
+    print("利用可能なGeminiモデルが見つかりませんでした。APIキーや地域設定を確認してください。")
+print("-------------------------")
+# =========================================================
+
 
 app = Flask(__name__)
 
@@ -23,7 +34,10 @@ def get_gemini_answer(question):
     """
     try:
         # 使用するモデルを指定 (例: gemini-pro)
-        model = genai.GenerativeModel('gemini-pro')
+        model = genai.GenerativeModel('models/gemini-1.5-flash')
+
+
+
 
         # AIに質問を送信し、回答を生成
         response = model.generate_content(question)
