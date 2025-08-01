@@ -12,3 +12,8 @@ __pycache__/
 .env
 venv/
 *.pyc
+.venv/
+__pycache__/
+.env
+venv/
+*.pyc
