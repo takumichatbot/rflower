@@ -23,6 +23,21 @@ def get_db():
         db.row_factory = sqlite3.Row  # 辞書形式で結果を取得するために設定
     return db
 
+# データベース初期化
+def init_db():
+    with app.app_context():
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                sender TEXT NOT NULL,
+                message TEXT NOT NULL,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+        db.commit()
+
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
@@ -52,7 +67,7 @@ def get_gemini_answer(question):
         
         full_question = f"""
         あなたはアールフラワーのカスタマーサポートAIです。
-        以下の「ルール・規則」セクションに記載されている情報のみに基づいて、お客様からの質問に元気に愛嬌よく回答してください。
+        以下の「ルール・規則」セクションに記載されている情報のみに基づいて、お客様からの質問に絵文字を使わずに丁寧に回答してください。
         **記載されていない質問には「申し訳ありませんが、その情報はこのQ&Aには含まれていません。」と答えてください。**
         お客様がスムーズに手続きを進められるよう、元気で丁寧な言葉遣いで案内してください。
 
@@ -115,4 +130,7 @@ def ask_chatbot():
     return jsonify({'answer': bot_answer})
 
 if __name__ == '__main__':
+    # データベースの初期化
+    init_db()
     app.run(debug=True, port=5001)
+
