@@ -61,7 +61,16 @@ function addMessageToChat(sender, message) {
     const messagesContainer = document.getElementById('chatbot-messages');
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message', `${sender}-message`);
-    messageDiv.textContent = message;
+
+    // URLをリンクに変換する処理
+    const linkifiedMessage = message.replace(
+        /(https?:\/\/[^\s]+)/g,
+        '<a href="$1" target="_blank">$1</a>'
+    );
+
+    // innerHTMLを使ってHTMLとして挿入
+    messageDiv.innerHTML = linkifiedMessage; 
+
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
