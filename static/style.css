@@ -7,15 +7,15 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    font-size: 1.1em; /* 基本のフォントサイズを少し大きく */
+    font-size: 1.1em;
 }
 
 /* チャットボットコンテナ */
 .chatbot-container {
-    width: 90%; /* 横幅を少し広げる */
-    max-width: 600px; /* 最大横幅を大きく */
+    width: 90%;
+    max-width: 600px;
     height: 90%;
-    max-height: 800px; /* 最大高さを大きく */
+    max-height: 800px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -26,10 +26,10 @@ body {
 
 /* ヘッダー */
 .chatbot-header {
-    background-color: #6c5ce7;
-    color: #fff;
-    padding: 20px; /* パディングを少し大きく */
-    font-size: 1.4em; /* フォントサイズを少し大きく */
+    background-color: hsl(157, 80%, 72%); /* アールフラワーのイメージカラー */
+    color: rgba(0, 0, 0, 0.596);
+    padding: 20px;
+    font-size: 1.4em;
     font-weight: bold;
     text-align: center;
     border-top-left-radius: 10px;
@@ -47,7 +47,7 @@ body {
 
 /* 個々のメッセージ */
 .message {
-    padding: 15px 20px; /* パディングを少し大きく */
+    padding: 15px 20px;
     border-radius: 20px;
     margin-bottom: 15px;
     max-width: 80%;
@@ -65,7 +65,7 @@ body {
 
 /* ユーザーのメッセージ */
 .user-message {
-    background-color: #6c5ce7;
+    background-color: #5ce7ce;
     color: #fff;
     align-self: flex-end;
     border-top-right-radius: 5px;
@@ -90,11 +90,11 @@ body {
 
 .chatbot-input input:focus {
     outline: none;
-    border-color: #6c5ce7;
+    border-color: #5ce7ce;
 }
 
 .chatbot-input button {
-    background-color: #6c5ce7;
+    background-color: #5ce7ce;
     color: #fff;
     border: none;
     border-radius: 20px;
@@ -106,5 +106,39 @@ body {
 }
 
 .chatbot-input button:hover {
-    background-color: #5a4bcf;
+    background-color: #5ce7ce;
+}
+
+/* 質問例ボタンコンテナ */
+.example-questions-container {
+    display: flex;
+    flex-direction: column; /* 縦並びに変更 */
+    gap: 10px; /* 縦の間隔 */
+    margin-top: 20px;
+    padding: 0 15px;
+    align-items: center; /* 中央揃えにする */
+}
+
+
+/* 質問例ボタン */
+.example-btn {
+    background-color: #d8f5e7;
+    color: #333;
+    border: 1px solid #b3e6c9;
+    border-radius: 15px; /* 角丸を調整 */
+    padding: 10px 15px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100%; /* 横幅をコンテナいっぱいに広げる */
+    box-sizing: border-box; /* パディングを含めて幅を計算 */
+    text-align: left; /* テキストを左寄せにする */
+    max-width: 300px; /* ボタンの最大幅を設定 */
+}
+
+
+
+.example-btn:hover {
+    background-color: #c0f2d6;
+    transform: translateY(-2px);
 }
