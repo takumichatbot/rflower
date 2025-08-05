@@ -64,9 +64,11 @@ function addMessageToChat(sender, message) {
 
     // URLをリンクに変換する処理
     const linkifiedMessage = message.replace(
-        /(https?:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,}(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/g,
+        /(https?:\/\/[^\s<>"'()]+)/g,
         '<a href="$1" target="_blank">$1</a>'
     );
+    
+    
     
 
     // innerHTMLを使ってHTMLとして挿入
