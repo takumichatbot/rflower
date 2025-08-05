@@ -66,7 +66,7 @@ function addMessageToChat(sender, message) {
     const linkifiedMessage = message.replace(
         /(https?:\/\/[^\s]+?)(?=[.,?!)\s]|$)/g,
         '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
-    );
+    );    
     
     
     
