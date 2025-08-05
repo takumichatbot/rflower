@@ -62,22 +62,19 @@ function addMessageToChat(sender, message) {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message', `${sender}-message`);
 
-    // URLをリンクに変換する処理
-    const linkifiedMessage = message.replace(
-        /(https?:\/\/[^\s]+?)(?=[.,?!)\s]|$)/g,
-        '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
-    );    
-    
-    
-    
-    
+    // URLをリンクに変換する、より堅牢な正規表現を使用
+    const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    const linkifiedMessage = message.replace(urlRegex, function(url) {
+        return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a>';
+    });
 
     // innerHTMLを使ってHTMLとして挿入
-    messageDiv.innerHTML = linkifiedMessage; 
+    messageDiv.innerHTML = linkifiedMessage;
 
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
+
 
 function handleKeyPress(event) {
     if (event.key === 'Enter') {
