@@ -38,10 +38,7 @@ async function sendMessage(message = null) {
         const data = await response.json();
         
         // ローディングメッセージを削除
-        const loadingMessage = document.querySelector('.bot-message:last-child');
-        if (loadingMessage) {
-            loadingMessage.remove();
-        }
+        document.querySelector('.bot-message:last-child').remove();
         
         // AIの回答をチャット画面に追加
         addMessageToChat('bot', data.answer);
@@ -49,11 +46,13 @@ async function sendMessage(message = null) {
     } catch (error) {
         console.error('Fetchエラー:', error);
         
+        // ローディングメッセージを削除
         const loadingMessage = document.querySelector('.bot-message:last-child');
         if (loadingMessage) {
             loadingMessage.remove();
         }
 
+        // タイムアウトやネットワークエラーの場合のメッセージ
         addMessageToChat('bot', '申し訳ありませんが、ネットワーク接続に問題が発生しました。しばらくしてから再度お試しください。');
     }
 }
@@ -63,8 +62,17 @@ function addMessageToChat(sender, message) {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message', `${sender}-message`);
 
-    // Geminiが生成したHTMLタグをそのまま挿入
-    messageDiv.innerHTML = message; 
+    // URLをリンクに変換する処理
+    const linkifiedMessage = message.replace(
+        /(https?:\/\/[^\s<>"'()]+)/g,
+        '<a href="$1" target="_blank">$1</a>'
+    );
+    
+    
+    
+
+    // innerHTMLを使ってHTMLとして挿入
+    messageDiv.innerHTML = linkifiedMessage; 
 
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
