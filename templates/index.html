@@ -12,12 +12,9 @@
         <div class="chatbot-messages" id="chatbot-messages">
             <div class="message bot-message">こんにちは！アールフラワーです！ 何か質問はありますか？(フラスタや回収、札についてなど) </div>
             <div class="example-questions-container">
-                <button class="example-btn">配送・回収について</button>
-                <button class="example-btn">空き状況について</button>
-                <button class="example-btn">ご注文について</button>
-                <button class="example-btn">お支払いについて</button>
-                <button class="example-btn">納品までの流れについて</button>
-                <button class="example-btn">パネルの代行について</button>
+                {% for question in example_questions %}
+                <button class="example-btn">{{ question }}</button>
+                {% endfor %}
             </div>
         </div>
         <div class="chatbot-input">
