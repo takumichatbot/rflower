@@ -1,9 +1,12 @@
 # main.py
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, abort
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 from qa_data import QA_DATA
+from linebot import LineBotApi, WebhookHandler
+from linebot.exceptions import InvalidSignatureError
+from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 load_dotenv()
 
@@ -12,11 +15,22 @@ if not GOOGLE_API_KEY:
     raise ValueError("GOOGLE_API_KEY 環境変数が設定されていません。")
 genai.configure(api_key=GOOGLE_API_KEY)
 
+# LINEの認証情報を.envから読み込む
+LINE_CHANNEL_ACCESS_TOKEN = os.getenv('LINE_CHANNEL_ACCESS_TOKEN')
+LINE_CHANNEL_SECRET = os.getenv('LINE_CHANNEL_SECRET')
+
+if not LINE_CHANNEL_ACCESS_TOKEN or not LINE_CHANNEL_SECRET:
+    print("WARNING: LINE_CHANNEL_ACCESS_TOKEN or LINE_CHANNEL_SECRET is not set. LINE integration will not work.")
+
+line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
+handler = WebhookHandler(LINE_CHANNEL_SECRET)
+
 app = Flask(__name__)
 
 # QAデータをプロンプトに組み込むためのテキストを作成
 qa_prompt_text = "\n\n".join([f"### {key}\n{value}" for key, value in QA_DATA['data'].items()])
 
+# get_gemini_answer関数を一番先に定義します
 def get_gemini_answer(question):
     print(f"質問: {question}")
     try:
@@ -24,7 +38,7 @@ def get_gemini_answer(question):
         print("Geminiモデルを初期化しました")
 
         full_question = f"""
-        あなたはアールフラワーのカスタマーサポートAIです。
+         あなたはアールフラワーのカスタマーサポートAIです。
         以下の「ルール・規則」セクションに記載されている情報のみに基づいて、お客様からの質問に絵文字を使わずに丁寧に回答してください。
         **記載されていない質問には「申し訳ありませんが、その情報はこのQ&Aには含まれていません。」と答えてください。**
         お客様がスムーズに手続きを進められるよう、元気で丁寧な言葉遣いで案内してください。
@@ -51,13 +65,13 @@ def get_gemini_answer(question):
         print(f"Gemini APIエラー: {type(e).__name__} - {e}")
         return "申し訳ありませんが、現在AIが応答できません。しばらくしてから再度お試しください。"
 
-
+# ホームページ用のルーティング
 @app.route('/')
 def index():
     example_questions = QA_DATA.get('example_questions', [])
     return render_template('index.html', example_questions=example_questions)
 
-
+# ウェブサイトのチャットボット用API
 @app.route('/ask', methods=['POST'])
 def ask_chatbot():
     user_message = request.json.get('message')
@@ -67,5 +81,39 @@ def ask_chatbot():
     bot_answer = get_gemini_answer(user_message)
     return jsonify({'answer': bot_answer})
 
+# LINEからのメッセージを受け取るためのルーティング
+@app.route("/callback", methods=['POST'])
+def callback():
+    signature = request.headers['X-Line-Signature']
+    body = request.get_data(as_text=True)
+
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        print("Invalid signature. Please check your channel access token/secret.")
+        abort(400)
+
+    return 'OK'
+
+# メッセージイベントを処理するハンドラー
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    user_message = event.message.text
+    # 応答をGeminiで生成
+    bot_response = get_gemini_answer(user_message)
+    
+    # AIが回答できない、またはユーザーが有人対応を希望した場合の処理
+    if "申し訳ありません" in bot_response or user_message == "有人対応希望":
+        reply_message = "ただいま担当者に転送しました。しばらくお待ちください。"
+    else:
+        # その他の場合はGeminiの応答をそのまま返す
+        reply_message = bot_response
+    
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=reply_message)
+    )
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    port = int(os.environ.get('PORT', 5001))
+    app.run(host='0.0.0.0', port=port, debug=False)

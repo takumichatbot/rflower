@@ -7,6 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
             sendMessage(question);
         });
     });
+
+    // 履歴クリアボタンを削除
+    // 履歴機能がないため、このボタンは不要
+
+    // 初回表示時にスクロール位置を調整
+    const messagesContainer = document.getElementById('chatbot-messages');
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
 });
 
 async function sendMessage(message = null) {
@@ -19,7 +26,7 @@ async function sendMessage(message = null) {
     addMessageToChat('user', userMessage);
     userInput.value = '';
 
-    // ローディングメッセージを表示（一意のクラス名とIDを追加）
+    // ローディングメッセージを表示
     const loadingMessageId = 'loading-' + new Date().getTime();
     addMessageToChat('bot', '...', true, loadingMessageId);
 
@@ -67,10 +74,10 @@ function addMessageToChat(sender, message, isLoading = false, id = null) {
         }
     }
 
-    // URLをリンクに変換する処理
+    // URLをリンクに変換
     const linkifiedMessage = message.replace(
         /(https?:\/\/[^\s<>"'()]+)/g,
-        '<a href="$1" target="_blank">$1</a>'
+        '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #667eea;">$1</a>'
     );
     
     // HTMLとして挿入
@@ -87,7 +94,6 @@ function removeLoadingMessage(id) {
         loadingMessageElement.remove();
     }
 }
-
 
 function handleKeyPress(event) {
     if (event.key === 'Enter') {
